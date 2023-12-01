@@ -7,7 +7,7 @@
 * пишет сообщения в виде json {'url','id','name'} в очередь **'test_item'**.
 
 
-Необходимо сбилдить docker образ сборщика командой ```docker build -t mycrawler .```
+Необходимо сбилдить docker образ сборщика командой ```docker build -t testcrawler .```
 
 Поднять сборщик и RabbitMQ: ```docker-compose up -d```
 
