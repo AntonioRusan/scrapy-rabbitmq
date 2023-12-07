@@ -1,4 +1,4 @@
-# Scrapy settings for test_scrapy_rabbit project
+# Scrapy settings for scrapy_rabbitmq_scheduler project
 #
 # For simplicity, this file contains only settings considered important or
 # commonly used. You can find more settings consulting the documentation:
@@ -7,10 +7,10 @@
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
-BOT_NAME = "test_scrapy_rabbit"
+BOT_NAME = "test_project"
 
-SPIDER_MODULES = ["test_scrapy_rabbit.spiders"]
-NEWSPIDER_MODULE = "test_scrapy_rabbit.spiders"
+SPIDER_MODULES = ["test_project.spiders"]
+NEWSPIDER_MODULE = "test_project.spiders"
 
 # Scheduler for specified project
 SCHEDULER = "scrapy_rabbitmq_scheduler.scheduler.SaaS"
@@ -30,12 +30,12 @@ ITEM_PIPELINES = {
     'scrapy_rabbitmq_scheduler.pipelines.RabbitmqPipeline': 300,
 }
 
-RABBITMQ_CONFIRM_DELIVERY = False
+RABBITMQ_CONFIRM_DELIVERY = True
 
 LOG_LEVEL = 'INFO'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = "test_scrapy_rabbit (+http://www.yourdomain.com)"
+#USER_AGENT = "scrapy_rabbitmq_scheduler (+http://www.yourdomain.com)"
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
@@ -66,13 +66,13 @@ ROBOTSTXT_OBEY = True
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 #SPIDER_MIDDLEWARES = {
-#    "test_scrapy_rabbit.middlewares.TestScrapyRabbitSpiderMiddleware": 543,
+#    "scrapy_rabbitmq_scheduler.middlewares.TestScrapyRabbitSpiderMiddleware": 543,
 #}
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #DOWNLOADER_MIDDLEWARES = {
-#    "test_scrapy_rabbit.middlewares.TestScrapyRabbitDownloaderMiddleware": 543,
+#    "scrapy_rabbitmq_scheduler.middlewares.TestScrapyRabbitDownloaderMiddleware": 543,
 #}
 
 # Enable or disable extensions
@@ -84,7 +84,7 @@ ROBOTSTXT_OBEY = True
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 #ITEM_PIPELINES = {
-#    "test_scrapy_rabbit.pipelines.TestScrapyRabbitPipeline": 300,
+#    "scrapy_rabbitmq_scheduler.pipelines.TestScrapyRabbitPipeline": 300,
 #}
 
 # Enable and configure the AutoThrottle extension (disabled by default)

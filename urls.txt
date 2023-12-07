@@ -2,3 +2,4 @@ https://demo-site.at.ispras.ru/product/1
 https://demo-site.at.ispras.ru/product/2
 https://demo-site.at.ispras.ru/product/3
 https://demo-site.at.ispras.ru/product/4
+https://demo-site.at.ispras.ru/product/5
