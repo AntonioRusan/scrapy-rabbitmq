@@ -1,7 +1,7 @@
 import pika
 connection = pika.BlockingConnection(pika.URLParameters('amqp://guest:guest@localhost:5672/'))
 channel = connection.channel()
-queue_key = 'test_urls'
+queue_key = 'test_messages'
 
 # Read the link in the file and write it to the queue
 with open('urls.txt') as f:
