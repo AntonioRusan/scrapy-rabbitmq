@@ -97,7 +97,6 @@ class RabbitMQQueue(IQueue):
                 return 
             except Exception as e:
                 try_time += 1
-                # logger.exception(e)
                 logger.error(
                     'ask a message failed, trying: {}...'.format(try_time))
                 self.connect()
