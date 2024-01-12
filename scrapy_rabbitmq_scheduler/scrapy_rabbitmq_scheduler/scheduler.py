@@ -153,13 +153,13 @@ class RabbitMQScheduler(Scheduler):
 
             #print(f"===========method_frame: {method_frame}, header_frame: {header_frame}, body: {message_json}==============")
 
-            instruction_from_json = json.loads(message_json)
-            request_body = {'url': instruction_from_json['url']}
+            order_from_json = json.loads(message_json)
+            request_body = {'url': order_from_json['url']}
 
             request = self.spider._make_request(method_frame, header_frame, request_body)
             if self.spider.settings.get('RABBITMQ_CONFIRM_DELIVERY', True):
                 request.meta['delivery_tag'] = method_frame.delivery_tag
-            request.meta['instruction_id'] = instruction_from_json['instruction_id']
+            request.meta['order_id'] = order_from_json['order_id']
 
             logger.info('Running request {}'.format(request.url))
             return request

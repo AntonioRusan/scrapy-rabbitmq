@@ -13,8 +13,8 @@ class ProductSpider(RabbitSpider):
         time.sleep(10)
         # print(f"\n===========================PRODUCT: id: {product_id}, name: {product_name}===============================\n")
         item = {
-            'instruction_id': response.request.meta['instruction_id'],
-            'status': 'Finished!',
+            'order_id': response.request.meta['order_id'],
+            'status': 'Finished',
             'result': {
                 'url': response.url,
                 'product_id': product_id,

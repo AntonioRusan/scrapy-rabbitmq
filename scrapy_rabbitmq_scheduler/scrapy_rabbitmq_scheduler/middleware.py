@@ -41,10 +41,10 @@ class RabbitMQMiddleware(object):
             else:
                 self.ack(request, response)
 
-                if 'instruction_id' in request.meta:
+                if 'order_id' in request.meta:
                     running_answer = {
-                        "instruction_id": request.meta['instruction_id'],
-                        "status": "Running!"
+                        "order_id": request.meta['order_id'],
+                        "status": "Running"
                     }
                     self.scheduler.publish_answer_to_queue(json.dumps(running_answer))
         else:
