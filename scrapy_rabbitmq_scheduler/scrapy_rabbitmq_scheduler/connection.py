@@ -5,10 +5,13 @@ import pika
 def get_channel(connection, queue_name, durable=True, confirm_delivery=True, is_delay=False):
     """ Init method to return a prepared channel for consuming
     """
+
     channel = connection.channel()
     channel.queue_declare(queue=queue_name, durable=durable, arguments={
-        'x-max-priority': 255
+        'x-max-priority': 4
     })
+    channel.basic_qos(prefetch_count=1)
+
     if confirm_delivery:
         channel.confirm_delivery()
 
