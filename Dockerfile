@@ -18,4 +18,4 @@ RUN poetry config virtualenvs.create false
 RUN poetry install --no-dev
 
 # Run the crawler when the container launches.
-CMD scrapy crawl $SCRAPY_SPIDER
+#CMD scrapy crawl $SCRAPY_SPIDER

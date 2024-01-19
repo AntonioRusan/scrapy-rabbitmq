@@ -21,6 +21,11 @@ services:
 
   testcrawler:
     image: testcrawler
-    restart: on-failure
+    restart: always
+    command: scrapy crawl product_spider -s RABBITMQ_HOST=amqp://guest:guest@rabbitmq:5672/ -s RABBITMQ_INPUT_QUEUE_KEY=scrapy_crawl_orders -s RABBITMQ_OUTPUT_QUEUE_KEY=scrapy_crawl_results
     depends_on:
-      - rabbitmq
+      #for docker-compose
+      #- rabbitmq
+      #for docker compose
+      rabbitmq:
+        condition: service_healthy
