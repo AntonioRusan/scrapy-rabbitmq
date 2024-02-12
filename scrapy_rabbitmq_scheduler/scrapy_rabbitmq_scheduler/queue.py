@@ -1,7 +1,6 @@
 # system packages
 import pika
 import logging
-from scrapy.utils.reqser import request_to_dict
 # module packages
 from . import connection
 from . import picklecompat
@@ -70,7 +69,7 @@ class RabbitMQQueue(IQueue):
 
     def _encode_request(self, request):
         """Encode a request object"""
-        obj = request_to_dict(request, self.spider)
+        obj = request.to_dict(spider=self.spider)
         return self.serializer.dumps(obj)
 
     @_try_operation

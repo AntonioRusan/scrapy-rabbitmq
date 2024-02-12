@@ -2,7 +2,7 @@ import pika
 import json
 connection = pika.BlockingConnection(pika.URLParameters('amqp://guest:guest@localhost:5672/'))
 channel = connection.channel()
-queue_key = 'test_crawl_orders'
+queue_key = 'scrapy_crawl_orders'
 
 # Read the link in the file and write it to the queue with id
 with open('urls.txt') as f:
