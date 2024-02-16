@@ -1,12 +1,13 @@
 #!/bin/bash
 
+# Get to scrapy crawler folder
 cd scrapy_rabbitmq_scheduler
 
-#create lock-file with dependencies
+# Create lock-file with dependencies
 poetry lock
 
-#install dependencies from lock-file
+# Install dependencies from lock-file
 poetry install
 
-#build egg-file
+# Build egg-file
 poetry run build-egg name=scrapy_rabbitmq

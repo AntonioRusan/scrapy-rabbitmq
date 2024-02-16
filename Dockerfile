@@ -1,4 +1,3 @@
-# As Scrapy runs on Python, I choose the official Python 3 Docker image.
 FROM python:3
 
 ARG python_version=latest
@@ -7,21 +6,21 @@ ARG POETRY_HTTP_BASIC_GITLAB_PASSWORD
 ARG POETRY_HTTP_BASIC_NEXUS_USERNAME
 ARG POETRY_HTTP_BASIC_NEXUS_PASSWORD
 
-
-#Install poetry
-RUN pip install poetry
-
 # Set default values for environment variables
 ENV SCRAPY_SPIDER=product_spider
 
 # Set the working directory to /app.
-WORKDIR /app
+WORKDIR home/app/
 
 # Copy the project source code from the local host to the filesystem of the container at the working directory.
-COPY scrapy_rabbitmq_scheduler/scrapy_rabbitmq.egg ./
-COPY scrapy_rabbitmq_scheduler/scrapy.cfg ./
+COPY scrapy_rabbitmq.egg scrapy_rabbitmq.egg
+COPY scrapy.cfg scrapy.cfg
 
+# Unzip inner egg file with crawler
 RUN unzip -o scrapy_rabbitmq.egg
+
+#Install poetry
+RUN pip install poetry
 
 #Install poetry dependencies
 RUN poetry config virtualenvs.create false
