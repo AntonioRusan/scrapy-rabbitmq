@@ -34,6 +34,10 @@ RABBITMQ_CONFIRM_DELIVERY = True
 
 LOG_LEVEL = 'INFO'
 
+# Specify the keys of input queue and output queue
+RABBITMQ_INPUT_QUEUE_KEY = 'test_crawl_orders'
+RABBITMQ_OUTPUT_QUEUE_KEY = 'test_crawl_results'
+
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = "scrapy_rabbitmq_scheduler (+http://www.yourdomain.com)"
 

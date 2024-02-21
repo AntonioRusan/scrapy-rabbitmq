@@ -1,5 +1,6 @@
 import pika
 import logging
+import json
 
 from scrapy.exceptions import IgnoreRequest
 
@@ -39,6 +40,13 @@ class RabbitMQMiddleware(object):
                 raise IgnoreRequest
             else:
                 self.ack(request, response)
+
+                if 'order_id' in request.meta:
+                    running_answer = {
+                        "order_id": request.meta['order_id'],
+                        "status": "Running"
+                    }
+                    self.scheduler.publish_answer_to_queue(json.dumps(running_answer))
         else:
             self.process_picture(response)
         return response

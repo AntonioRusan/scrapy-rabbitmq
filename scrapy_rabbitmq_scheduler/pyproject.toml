@@ -9,6 +9,11 @@ packages = [
     { include = "scrapy_rabbitmq_scheduler" },
 ]
 
+[[tool.poetry.source]]
+name = "gitlab"
+url = "https://gitlab.at.ispras.ru/api/v4/projects/254/packages/pypi/simple"
+priority = "default"
+
 [tool.poetry.dependencies]
 python = "^3.10"
 attrs = "^23.1.0"
@@ -17,7 +22,7 @@ certifi = "^2023.11.17"
 cffi = "^1.16.0"
 charset-normalizer = "^3.3.2"
 constantly = "^23.10.4"
-cryptography = "38.0.4"
+cryptography = "36.0.2"
 cssselect = "^1.2.0"
 filelock = "^3.13.1"
 h2 = "^4.1.0"
@@ -43,7 +48,7 @@ pyopenssl = "22.0.0"
 queuelib = "^1.6.2"
 requests = "^2.31.0"
 requests-file = "^1.5.1"
-scrapy = "2.9.0"
+Scrapy = "2.11"
 service-identity = "^23.1.0"
 six = "^1.16.0"
 tldextract = "^5.1.1"
@@ -52,9 +57,7 @@ typing-extensions = "^4.8.0"
 urllib3 = "^2.1.0"
 w3lib = "^2.1.2"
 zope-interface = "^6.1"
-
-
-
+modis-crawler-utils = { version=">=0.2.57", source = "gitlab" }
 
 [build-system]
 requires = ["poetry-core"]

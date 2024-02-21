@@ -3,6 +3,7 @@ import time
 import signal
 import logging
 import pickle
+import json
 
 from scrapy.http import Request
 from . import connection
@@ -55,16 +56,29 @@ class RabbitMQScheduler(Scheduler):
     queue = None
     stats = None
 
-    def __init__(self, connection_url, *args, **kwargs):
+    server = None
+    output_queue_channel = None
+
+    def __init__(self, connection_url, input_queue_key, output_queue_key, *args, **kwargs):
         self.connection_url = connection_url
         self.waiting = False
         self.closing = False
 
+        self.input_queue_key = input_queue_key
+
+        self.server = connection.connect(connection_url)
+        self.output_queue_key = output_queue_key
+        self.output_queue_channel = connection.get_channel(self.server, self.output_queue_key)
+
     @classmethod
     def from_settings(cls, settings):
         cls._ensure_settings(settings, 'RABBITMQ_CONNECTION_PARAMETERS')
+        cls._ensure_settings(settings, 'RABBITMQ_OUTPUT_QUEUE_KEY')
+        cls._ensure_settings(settings, 'RABBITMQ_INPUT_QUEUE_KEY')
         connection_url = settings.get('RABBITMQ_CONNECTION_PARAMETERS')
-        return cls(connection_url)
+        output_queue_key = settings.get('RABBITMQ_OUTPUT_QUEUE_KEY')
+        input_queue_key = settings.get('RABBITMQ_INPUT_QUEUE_KEY')
+        return cls(connection_url, input_queue_key, output_queue_key)
 
     @classmethod
     def from_crawler(cls, crawler):
@@ -83,13 +97,13 @@ class RabbitMQScheduler(Scheduler):
             msg += repo_url
             raise NotImplementedError(msg)
 
-        if not hasattr(spider, 'queue_name'):
-            msg = 'Please set queue_name parameter to spider. '
-            msg += 'Consult manual at ' + repo_url
-            raise ValueError(msg)
+        # if not hasattr(spider, 'queue_name'):
+        #     msg = 'Please set queue_name parameter to spider. '
+        #     msg += 'Consult manual at ' + repo_url
+        #     raise ValueError(msg)
 
         self.spider = spider
-        self.queue = self._make_queue(spider.queue_name)
+        self.queue = self._make_queue(self.input_queue_key)
         msg_count = len(self.queue)
         if msg_count:
             logger.info(
@@ -130,17 +144,22 @@ class RabbitMQScheduler(Scheduler):
 
         no_ack = True if self.spider.settings.get(
             'RABBITMQ_CONFIRM_DELIVERY', True) is False else False
-        mframe, hframe, body = self.queue.pop(no_ack=no_ack)
-
-        if any([mframe, hframe, body]):
+        method_frame, header_frame, message_json = self.queue.pop(no_ack=no_ack)
+        if any([method_frame, header_frame, message_json]):
             self.waiting = False
             if self.stats:
                 self.stats.inc_value('scheduler/dequeued/rabbitmq',
                                      spider=self.spider)
 
-            request = self.spider._make_request(mframe, hframe, body)
+            #print(f"===========method_frame: {method_frame}, header_frame: {header_frame}, body: {message_json}==============")
+
+            order_from_json = json.loads(message_json)
+            request_body = {'url': order_from_json['url']}
+
+            request = self.spider._make_request(method_frame, header_frame, request_body)
             if self.spider.settings.get('RABBITMQ_CONFIRM_DELIVERY', True):
-                request.meta['delivery_tag'] = mframe.delivery_tag
+                request.meta['delivery_tag'] = method_frame.delivery_tag
+            request.meta['order_id'] = order_from_json['order_id']
 
             logger.info('Running request {}'.format(request.url))
             return request
@@ -164,9 +183,22 @@ class SaaS(RabbitMQScheduler):
 
     def ack_message(self, delivery_tag):
         if self.queue is not None:
-            #logger.info("QUEUE EXISTS")
             self.queue.ack(delivery_tag)
 
     def requeue_message(self, body, headers=None):
         if self.queue:
             self.queue.push(body, headers)
+
+    def publish_answer_to_queue(self, answer):
+        try_time = 1
+        while try_time <= 10:
+            try:
+                self.output_queue_channel.basic_publish(exchange='',
+                                            routing_key=self.output_queue_key,
+                                            body=answer)
+                return
+            except Exception as e:
+                logger.exception(e)
+                logger.error('process item failed! try_time:{}'.format(try_time))
+                try_time += 1
+                self.output_queue_channel = connection.get_channel(self.server, self.output_queue_key)

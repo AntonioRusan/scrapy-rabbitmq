@@ -1,7 +1,6 @@
 # system packages
 import pika
 import logging
-from scrapy.utils.reqser import request_to_dict
 # module packages
 from . import connection
 from . import picklecompat
@@ -70,7 +69,7 @@ class RabbitMQQueue(IQueue):
 
     def _encode_request(self, request):
         """Encode a request object"""
-        obj = request_to_dict(request, self.spider)
+        obj = request.to_dict(spider=self.spider)
         return self.serializer.dumps(obj)
 
     @_try_operation
@@ -97,7 +96,6 @@ class RabbitMQQueue(IQueue):
                 return 
             except Exception as e:
                 try_time += 1
-                # logger.exception(e)
                 logger.error(
                     'ask a message failed, trying: {}...'.format(try_time))
                 self.connect()
@@ -110,7 +108,7 @@ class RabbitMQQueue(IQueue):
         if body.priority < 0 or body.priority > 255:
             properties.priority = 0
 
-        # 处理延时消息
+        # Handle delayed messages
         if '_delay_time' in body.meta:
             headers['x-delay'] = body.meta.get('_delay_time')
 
